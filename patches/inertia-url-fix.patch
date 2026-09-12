@@ -1,0 +1,12 @@
+--- a/vendor/inertiajs/inertia-laravel/src/Response.php
++++ b/vendor/inertiajs/inertia-laravel/src/Response.php
+@@ -99,7 +99,7 @@
+ 
+         $page = [
+             'component' => $this->component,
+             'props' => $props,
+-            'url' => $request->getBaseUrl().$request->getRequestUri(),
++            'url' => $request->url(),
+             'version' => $this->version,
+         ];
+ 

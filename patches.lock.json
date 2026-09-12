@@ -1,0 +1,17 @@
+{
+    "_hash": "0e59fb67e84acce37962caba13f76fdd2680432a81dea26f8391da4336cef540",
+    "patches": {
+        "inertiajs/inertia-laravel": [
+            {
+                "package": "inertiajs/inertia-laravel",
+                "description": "Fix doubled URL in subdirectory deployments",
+                "url": "patches/inertia-url-fix.patch",
+                "sha256": "171ee23f51ae74ea8f6db09551dea4f0b42503fb180d0110081457b655cea3e9",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}

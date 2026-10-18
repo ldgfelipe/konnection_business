@@ -1,7 +1,7 @@
-import { onMounted, onUnmounted, computed, ref, mergeProps, useSSRContext, unref, withCtx, renderSlot, createVNode, createTextVNode, toDisplayString, openBlock, createBlock } from "vue";
+import { onMounted, onUnmounted, computed, ref, mergeProps, useSSRContext, unref, withCtx, renderSlot, createVNode, createTextVNode, openBlock, createBlock, toDisplayString } from "vue";
 import { ssrRenderAttrs, ssrRenderSlot, ssrRenderStyle, ssrRenderClass, ssrRenderComponent, ssrInterpolate } from "vue/server-renderer";
 import { A as ApplicationLogo } from "./ApplicationLogo-DB5hZ_I6.js";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 const _sfc_main$4 = {
   __name: "Dropdown",
   __ssrInlineRender: true,
@@ -185,6 +185,12 @@ const _sfc_main = {
   __ssrInlineRender: true,
   setup(__props) {
     const showingNavigationDropdown = ref(false);
+    const page = usePage();
+    const isAdmin = computed(() => {
+      var _a;
+      const user = (_a = page.props.auth) == null ? void 0 : _a.user;
+      return !!(user && (user.is_admin === true || user.role === "admin"));
+    });
     return (_ctx, _push, _parent, _attrs) => {
       var _a, _b;
       _push(`<div${ssrRenderAttrs(_attrs)}><div class="min-h-screen bg-gray-100"><nav class="bg-white border-b border-gray-100"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex justify-between h-16"><div class="flex"><div class="shrink-0 flex items-center">`);
@@ -248,6 +254,104 @@ const _sfc_main = {
         }),
         _: 1
       }, _parent));
+      if (isAdmin.value) {
+        _push(`<div class="relative">`);
+        _push(ssrRenderComponent(_sfc_main$4, {
+          align: "right",
+          width: "48"
+        }, {
+          trigger: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<span class="inline-flex rounded-md"${_scopeId}><button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"${_scopeId}><svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"${_scopeId}></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"${_scopeId}></path></svg> Administración </button></span>`);
+            } else {
+              return [
+                createVNode("span", { class: "inline-flex rounded-md" }, [
+                  createVNode("button", {
+                    type: "button",
+                    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                  }, [
+                    (openBlock(), createBlock("svg", {
+                      class: "h-5 w-5 mr-1",
+                      fill: "none",
+                      stroke: "currentColor",
+                      viewBox: "0 0 24 24"
+                    }, [
+                      createVNode("path", {
+                        "stroke-linecap": "round",
+                        "stroke-linejoin": "round",
+                        "stroke-width": "2",
+                        d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                      }),
+                      createVNode("path", {
+                        "stroke-linecap": "round",
+                        "stroke-linejoin": "round",
+                        "stroke-width": "2",
+                        d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      })
+                    ])),
+                    createTextVNode(" Administración ")
+                  ])
+                ])
+              ];
+            }
+          }),
+          content: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(ssrRenderComponent(_sfc_main$3, {
+                href: _ctx.route("admin.settings.integrations")
+              }, {
+                default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+                  if (_push3) {
+                    _push3(` Configuración Integraciones `);
+                  } else {
+                    return [
+                      createTextVNode(" Configuración Integraciones ")
+                    ];
+                  }
+                }),
+                _: 1
+              }, _parent2, _scopeId));
+              _push2(ssrRenderComponent(_sfc_main$3, {
+                href: _ctx.route("admin.profetit-users.index")
+              }, {
+                default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+                  if (_push3) {
+                    _push3(` Usuarios Certificados Profetit `);
+                  } else {
+                    return [
+                      createTextVNode(" Usuarios Certificados Profetit ")
+                    ];
+                  }
+                }),
+                _: 1
+              }, _parent2, _scopeId));
+            } else {
+              return [
+                createVNode(_sfc_main$3, {
+                  href: _ctx.route("admin.settings.integrations")
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(" Configuración Integraciones ")
+                  ]),
+                  _: 1
+                }, 8, ["href"]),
+                createVNode(_sfc_main$3, {
+                  href: _ctx.route("admin.profetit-users.index")
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(" Usuarios Certificados Profetit ")
+                  ]),
+                  _: 1
+                }, 8, ["href"])
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
       _push(`</div></div><div class="hidden sm:flex sm:items-center sm:ms-6">`);
       if (_ctx.$page.props.auth.user) {
         _push(`<div class="ms-3 relative">`);
@@ -300,14 +404,14 @@ const _sfc_main = {
                 _: 1
               }, _parent2, _scopeId));
               _push2(ssrRenderComponent(_sfc_main$3, {
-                href: _ctx.route("perfilEmpresas")
+                href: _ctx.route("misempresas")
               }, {
                 default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                   if (_push3) {
-                    _push3(` Mi Empresas `);
+                    _push3(` Mis Empresas `);
                   } else {
                     return [
-                      createTextVNode(" Mi Empresas ")
+                      createTextVNode(" Mis Empresas ")
                     ];
                   }
                 }),
@@ -354,10 +458,10 @@ const _sfc_main = {
                   _: 1
                 }, 8, ["href"]),
                 createVNode(_sfc_main$3, {
-                  href: _ctx.route("perfilEmpresas")
+                  href: _ctx.route("misempresas")
                 }, {
                   default: withCtx(() => [
-                    createTextVNode(" Mi Empresas ")
+                    createTextVNode(" Mis Empresas ")
                   ]),
                   _: 1
                 }, 8, ["href"]),
@@ -471,6 +575,42 @@ const _sfc_main = {
         }),
         _: 1
       }, _parent));
+      if (isAdmin.value) {
+        _push(`<!--[--><div class="px-4 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"> Administración </div>`);
+        _push(ssrRenderComponent(_sfc_main$1, {
+          href: _ctx.route("admin.settings.integrations"),
+          active: _ctx.route().current("admin.settings.integrations")
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(` Configuración Integraciones `);
+            } else {
+              return [
+                createTextVNode(" Configuración Integraciones ")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(ssrRenderComponent(_sfc_main$1, {
+          href: _ctx.route("admin.profetit-users.index"),
+          active: _ctx.route().current("admin.profetit-users.*")
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(` Usuarios Certificados Profetit `);
+            } else {
+              return [
+                createTextVNode(" Usuarios Certificados Profetit ")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`<!--]-->`);
+      } else {
+        _push(`<!---->`);
+      }
       _push(`</div>`);
       if (_ctx.$page.props.auth.user) {
         _push(`<div class="pt-4 pb-1 border-t border-gray-200"><div class="px-4"><div class="font-medium text-base text-gray-800">${ssrInterpolate((_a = _ctx.$page.props.auth.user) == null ? void 0 : _a.name)}</div><div class="font-medium text-sm text-gray-500">${ssrInterpolate((_b = _ctx.$page.props.auth.user) == null ? void 0 : _b.email)}</div></div><div class="mt-3 space-y-1">`);
@@ -488,21 +628,21 @@ const _sfc_main = {
           }),
           _: 1
         }, _parent));
-        _push(ssrRenderComponent(_sfc_main$3, {
-          href: _ctx.route("perfilEmpresas")
+        _push(ssrRenderComponent(_sfc_main$1, {
+          href: _ctx.route("misempresas")
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`Mi Empresas `);
+              _push2(`Mis Empresas `);
             } else {
               return [
-                createTextVNode("Mi Empresas ")
+                createTextVNode("Mis Empresas ")
               ];
             }
           }),
           _: 1
         }, _parent));
-        _push(ssrRenderComponent(_sfc_main$3, {
+        _push(ssrRenderComponent(_sfc_main$1, {
           href: _ctx.route("misproductos")
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {

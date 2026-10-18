@@ -20,6 +20,14 @@ const form = useForm({
     name: user.name,
     email: user.email,
 });
+
+const sendVerification = () => {
+    form.post(route('profile.verify-email.send'), {
+        onSuccess: () => {
+            // Status will be handled by the parent component
+        },
+    });
+};
 </script>
 
 <template>
@@ -68,7 +76,7 @@ const form = useForm({
                 <p class="text-sm mt-2 text-gray-800">
                     Su dirección de correo electrónico no está verificada.
                     <Link
-                        :href="route('verification.send')"
+                        :href="route('profile.verify-email.send')"
                         method="post"
                         as="button"
                         class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

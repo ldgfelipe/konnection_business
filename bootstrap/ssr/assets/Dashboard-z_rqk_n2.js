@@ -1,6 +1,6 @@
 import { resolveComponent, unref, withCtx, createTextVNode, toDisplayString, createVNode, openBlock, createBlock, createCommentVNode, Fragment, renderList, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrRenderList, ssrInterpolate } from "vue/server-renderer";
-import { _ as _sfc_main$1 } from "./AuthenticatedLayout-CjO21aP_.js";
+import { _ as _sfc_main$1 } from "./AuthenticatedLayout-BTyN4XEz.js";
 import { Head } from "@inertiajs/vue3";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 import "./ApplicationLogo-DB5hZ_I6.js";

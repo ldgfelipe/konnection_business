@@ -28,8 +28,15 @@ class ProductosController extends Controller
 
     public function eliminaproducto(Request $request){
 
-        // busca información del producto en la base de datos 
-        $prod=Producto::where('id','=',$request->id)->first();
+        // El producto debe pertenecer al usuario autenticado
+        $prod=Producto::where('id','=',$request->id)
+            ->where('id_user','=',Auth::user()->id)
+            ->first();
+
+        if(!$prod){
+            return response()->json(Array('res'=>'Producto no encontrado'), 404);
+        }
+
         if(isset($prod->imagen) and $prod->imagen!=NULL){ // comprueba si el producto tiene imagenes
         $imgsep=explode(",",$prod->imagen);// separa el string por comas de las imagenes en un array 
         
@@ -46,7 +53,7 @@ class ProductosController extends Controller
             
     }
   
-        Producto::where('id','=',$request->id)->delete();      /// se eliminma de la base el producto 
+        $prod->delete();      /// se eliminma de la base el producto 
     
       return response()->json(Array('res'=>'Se va a eliminar el producto '.$request->id)); /// se regresa respuesta 
     }
@@ -85,13 +92,14 @@ class ProductosController extends Controller
     }
 
     public function misproductos(Request $request){
-        $listaproductos=Producto::where('id_user','=',Auth::user()->id)->get();
-        $dtEmpresa=Empresa::where('id_user','=',Auth::user()->id)->first();
-        $datosUser=Auth::user();
+        $user=Auth::user();
+        $listaproductos=Producto::where('id_user','=',$user->id)->get();
+        $empresas=Empresa::where('id_user','=',$user->id)->orderBy('id')->get();
         return Inertia::render('Productos/MisProductos',[
             'listaproductos'=>$listaproductos,
-            'dtUser'=>$datosUser,
-            'dtEmpresa'=>$dtEmpresa
+            'dtUser'=>$user,
+            'dtEmpresas'=>$empresas,
+            'dtEmpresa'=>$empresas->first()
         ]);
     }
 
@@ -99,12 +107,32 @@ class ProductosController extends Controller
         $dirImagen="";
         $mensajedata="";
 
+        // El producto debe publicarse dentro de una empresa propia
+        if(!$request->filled('id_empresa')){
+            return response()->json(Array('res'=>'Primero registra tu empresa o servicio.'), 403);
+        }
+
+        $empresaPropia = Empresa::where('id', $request->id_empresa)
+            ->where('id_user', Auth::user()->id)
+            ->exists();
+
+        if(!$empresaPropia){
+            return response()->json(Array('res'=>'Empresa no encontrada'), 403);
+        }
+
 
 
        if(isset($request->action) and $request->action=="actualizar"){
-        //actualiza producto
+        //actualiza producto (solo si pertenece al usuario autenticado)
+        $producto = Producto::where('id','=',$request->id)
+            ->where('id_user','=',Auth::user()->id)
+            ->first();
+
+        if(!$producto){
+            return response()->json(Array('res'=>'Producto no encontrado'), 404);
+        }
+
         $dirImagen=$request->imagen;
-     
 
         if(isset($request->eliminaImagenes) and $request->eliminaImagenes!=NULL){
 
@@ -156,6 +184,20 @@ class ProductosController extends Controller
        }
        
        if(isset($request->action) and $request->action=="nuevo"){
+        // Límite del plan gratuito (los certificados por Profetit no tienen límite)
+        $user = Auth::user();
+        if (! $user->hasFreeAccess()) {
+            $limit = (int) config('konnection.free_plan.products', 5);
+            $current = Producto::where('id_user', '=', $user->id)->count();
+
+            if ($limit > 0 && $current >= $limit) {
+                return response()->json(Array(
+                    'res' => "Alcanzaste el límite de {$limit} publicaciones del plan gratuito. Certifícate con Profetit para publicar sin restricciones.",
+                    'limit_reached' => true,
+                ), 403);
+            }
+        }
+
         //crea producto 
         $prod=new Producto();
         $prod->id_user=Auth::user()->id;

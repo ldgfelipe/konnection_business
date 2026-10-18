@@ -39,6 +39,13 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'app' => [
+                'storageBase' => config('app.public_storage_base', '/storage'),
+            ],
+            'flash' => [
+                'status' => fn () => $request->session()->get('status'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
             'csrf_token' => csrf_token(),
         ];
     }

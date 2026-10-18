@@ -1,14 +1,15 @@
-import { resolveComponent, mergeProps, withCtx, createTextVNode, openBlock, createBlock, createCommentVNode, createVNode, toDisplayString, useSSRContext, unref } from "vue";
-import { ssrRenderComponent, ssrRenderAttr, ssrInterpolate } from "vue/server-renderer";
+import { resolveComponent, mergeProps, withCtx, createTextVNode, toDisplayString, openBlock, createBlock, createCommentVNode, createVNode, useSSRContext, unref } from "vue";
+import { ssrRenderComponent, ssrInterpolate, ssrRenderAttr, ssrRenderStyle } from "vue/server-renderer";
 import { c as categorias } from "./categorias-BLbQNXcu.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
-import { _ as _sfc_main$2 } from "./AuthenticatedLayout-CjO21aP_.js";
+import { _ as _sfc_main$2 } from "./AuthenticatedLayout-BTyN4XEz.js";
 import { Head } from "@inertiajs/vue3";
 import "./ApplicationLogo-DB5hZ_I6.js";
 const _sfc_main$1 = {
   data() {
     return {
       empr: {
+        id: "",
         nombre: "",
         rfc: "",
         descripcion: "",
@@ -29,10 +30,15 @@ const _sfc_main$1 = {
   props: {
     empresa: {
       type: Object
+    },
+    freeAccess: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
     if (this.empresa) {
+      this.empr.id = this.empresa.id;
       this.empr.nombre = this.empresa.nombre;
       this.empr.rfc = this.empresa.rfc;
       this.empr.descripcion = this.empresa.descripcion;
@@ -48,6 +54,7 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
   const _component_v_card = resolveComponent("v-card");
   const _component_v_card_title = resolveComponent("v-card-title");
   const _component_v_card_text = resolveComponent("v-card-text");
+  const _component_v_alert = resolveComponent("v-alert");
   const _component_v_text_field = resolveComponent("v-text-field");
   const _component_v_btn = resolveComponent("v-btn");
   const _component_v_file_input = resolveComponent("v-file-input");
@@ -61,10 +68,10 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
         _push2(ssrRenderComponent(_component_v_card_title, { class: "text-center" }, {
           default: withCtx((_2, _push3, _parent3, _scopeId2) => {
             if (_push3) {
-              _push3(` Datos de Empresa `);
+              _push3(`${ssrInterpolate($data.empr.id ? "Editar Empresa" : "Registrar Empresa o Servicio")}`);
             } else {
               return [
-                createTextVNode(" Datos de Empresa ")
+                createTextVNode(toDisplayString($data.empr.id ? "Editar Empresa" : "Registrar Empresa o Servicio"), 1)
               ];
             }
           }),
@@ -73,23 +80,65 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
         _push2(ssrRenderComponent(_component_v_card_text, null, {
           default: withCtx((_2, _push3, _parent3, _scopeId2) => {
             if (_push3) {
+              if ($props.freeAccess) {
+                _push3(ssrRenderComponent(_component_v_alert, {
+                  type: "success",
+                  variant: "tonal",
+                  density: "compact",
+                  class: "mb-3"
+                }, {
+                  default: withCtx((_3, _push4, _parent4, _scopeId3) => {
+                    if (_push4) {
+                      _push4(` Profesional certificado por Profetit: registro gratuito y sin restricciones. `);
+                    } else {
+                      return [
+                        createTextVNode(" Profesional certificado por Profetit: registro gratuito y sin restricciones. ")
+                      ];
+                    }
+                  }),
+                  _: 1
+                }, _parent3, _scopeId2));
+              } else {
+                _push3(ssrRenderComponent(_component_v_alert, {
+                  type: "info",
+                  variant: "tonal",
+                  density: "compact",
+                  class: "mb-3"
+                }, {
+                  default: withCtx((_3, _push4, _parent4, _scopeId3) => {
+                    if (_push4) {
+                      _push4(` Publicar tu empresa o servicio es gratuito. Certifícate con Profetit para no tener límites. `);
+                    } else {
+                      return [
+                        createTextVNode(" Publicar tu empresa o servicio es gratuito. Certifícate con Profetit para no tener límites. ")
+                      ];
+                    }
+                  }),
+                  _: 1
+                }, _parent3, _scopeId2));
+              }
               if ($data.empr.logo) {
-                _push3(`<img${ssrRenderAttr("src", _ctx.$assetUrl($data.empr.logo))}${_scopeId2}>`);
+                _push3(`<img${ssrRenderAttr("src", _ctx.$assetUrl($data.empr.logo))} style="${ssrRenderStyle({ "max-width": "100%" })}"${_scopeId2}>`);
               } else {
                 _push3(`<!---->`);
               }
-              _push3(`<form method="POST"${_scopeId2}>`);
-              _push3(ssrRenderComponent(_component_v_text_field, {
-                type: "hidden",
-                name: "logo_del",
-                value: $data.empr.logo
-              }, null, _parent3, _scopeId2));
-              _push3(ssrRenderComponent(_component_v_text_field, {
-                type: "hidden",
-                name: "_token",
-                value: this.$page.props.csrf_token
-              }, null, _parent3, _scopeId2));
               if ($data.empr.logo) {
+                _push3(`<form method="POST"${_scopeId2}>`);
+                _push3(ssrRenderComponent(_component_v_text_field, {
+                  type: "hidden",
+                  name: "id",
+                  value: $data.empr.id
+                }, null, _parent3, _scopeId2));
+                _push3(ssrRenderComponent(_component_v_text_field, {
+                  type: "hidden",
+                  name: "logo_del",
+                  value: $data.empr.logo
+                }, null, _parent3, _scopeId2));
+                _push3(ssrRenderComponent(_component_v_text_field, {
+                  type: "hidden",
+                  name: "_token",
+                  value: this.$page.props.csrf_token
+                }, null, _parent3, _scopeId2));
                 _push3(ssrRenderComponent(_component_v_btn, {
                   type: "submit",
                   style: { "color": "#fff", "background-color": "red" }
@@ -105,10 +154,16 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                   }),
                   _: 1
                 }, _parent3, _scopeId2));
+                _push3(`</form>`);
               } else {
                 _push3(`<!---->`);
               }
-              _push3(`</form><form method="POST" id="guardaEmpresa" enctype="multipart/form-data"${_scopeId2}>`);
+              _push3(`<form method="POST" id="guardaEmpresa" enctype="multipart/form-data"${_scopeId2}>`);
+              _push3(ssrRenderComponent(_component_v_text_field, {
+                type: "hidden",
+                name: "id",
+                value: $data.empr.id
+              }, null, _parent3, _scopeId2));
               if (!$data.empr.logo) {
                 _push3(ssrRenderComponent(_component_v_file_input, {
                   outlined: "",
@@ -195,14 +250,61 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                 }),
                 _: 1
               }, _parent3, _scopeId2));
+              _push3(ssrRenderComponent(_component_v_btn, {
+                href: _ctx.route("misempresas"),
+                style: { "color": "black" }
+              }, {
+                default: withCtx((_3, _push4, _parent4, _scopeId3) => {
+                  if (_push4) {
+                    _push4(`Mis Empresas`);
+                  } else {
+                    return [
+                      createTextVNode("Mis Empresas")
+                    ];
+                  }
+                }),
+                _: 1
+              }, _parent3, _scopeId2));
               _push3(`</form>`);
             } else {
               return [
-                $data.empr.logo ? (openBlock(), createBlock("img", {
+                $props.freeAccess ? (openBlock(), createBlock(_component_v_alert, {
                   key: 0,
-                  src: _ctx.$assetUrl($data.empr.logo)
+                  type: "success",
+                  variant: "tonal",
+                  density: "compact",
+                  class: "mb-3"
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(" Profesional certificado por Profetit: registro gratuito y sin restricciones. ")
+                  ]),
+                  _: 1
+                })) : (openBlock(), createBlock(_component_v_alert, {
+                  key: 1,
+                  type: "info",
+                  variant: "tonal",
+                  density: "compact",
+                  class: "mb-3"
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode(" Publicar tu empresa o servicio es gratuito. Certifícate con Profetit para no tener límites. ")
+                  ]),
+                  _: 1
+                })),
+                $data.empr.logo ? (openBlock(), createBlock("img", {
+                  key: 2,
+                  src: _ctx.$assetUrl($data.empr.logo),
+                  style: { "max-width": "100%" }
                 }, null, 8, ["src"])) : createCommentVNode("", true),
-                createVNode("form", { method: "POST" }, [
+                $data.empr.logo ? (openBlock(), createBlock("form", {
+                  key: 3,
+                  method: "POST"
+                }, [
+                  createVNode(_component_v_text_field, {
+                    type: "hidden",
+                    name: "id",
+                    value: $data.empr.id
+                  }, null, 8, ["value"]),
                   createVNode(_component_v_text_field, {
                     type: "hidden",
                     name: "logo_del",
@@ -213,8 +315,7 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                     name: "_token",
                     value: this.$page.props.csrf_token
                   }, null, 8, ["value"]),
-                  $data.empr.logo ? (openBlock(), createBlock(_component_v_btn, {
-                    key: 0,
+                  createVNode(_component_v_btn, {
                     type: "submit",
                     style: { "color": "#fff", "background-color": "red" }
                   }, {
@@ -222,13 +323,18 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                       createTextVNode("Eliminar Imagen")
                     ]),
                     _: 1
-                  })) : createCommentVNode("", true)
-                ]),
+                  })
+                ])) : createCommentVNode("", true),
                 createVNode("form", {
                   method: "POST",
                   id: "guardaEmpresa",
                   enctype: "multipart/form-data"
                 }, [
+                  createVNode(_component_v_text_field, {
+                    type: "hidden",
+                    name: "id",
+                    value: $data.empr.id
+                  }, null, 8, ["value"]),
                   !$data.empr.logo ? (openBlock(), createBlock(_component_v_file_input, {
                     key: 0,
                     outlined: "",
@@ -306,7 +412,16 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                       createTextVNode("Guardar")
                     ]),
                     _: 1
-                  })
+                  }),
+                  createVNode(_component_v_btn, {
+                    href: _ctx.route("misempresas"),
+                    style: { "color": "black" }
+                  }, {
+                    default: withCtx(() => [
+                      createTextVNode("Mis Empresas")
+                    ]),
+                    _: 1
+                  }, 8, ["href"])
                 ])
               ];
             }
@@ -317,17 +432,49 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
         return [
           createVNode(_component_v_card_title, { class: "text-center" }, {
             default: withCtx(() => [
-              createTextVNode(" Datos de Empresa ")
+              createTextVNode(toDisplayString($data.empr.id ? "Editar Empresa" : "Registrar Empresa o Servicio"), 1)
             ]),
             _: 1
           }),
           createVNode(_component_v_card_text, null, {
             default: withCtx(() => [
-              $data.empr.logo ? (openBlock(), createBlock("img", {
+              $props.freeAccess ? (openBlock(), createBlock(_component_v_alert, {
                 key: 0,
-                src: _ctx.$assetUrl($data.empr.logo)
+                type: "success",
+                variant: "tonal",
+                density: "compact",
+                class: "mb-3"
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(" Profesional certificado por Profetit: registro gratuito y sin restricciones. ")
+                ]),
+                _: 1
+              })) : (openBlock(), createBlock(_component_v_alert, {
+                key: 1,
+                type: "info",
+                variant: "tonal",
+                density: "compact",
+                class: "mb-3"
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(" Publicar tu empresa o servicio es gratuito. Certifícate con Profetit para no tener límites. ")
+                ]),
+                _: 1
+              })),
+              $data.empr.logo ? (openBlock(), createBlock("img", {
+                key: 2,
+                src: _ctx.$assetUrl($data.empr.logo),
+                style: { "max-width": "100%" }
               }, null, 8, ["src"])) : createCommentVNode("", true),
-              createVNode("form", { method: "POST" }, [
+              $data.empr.logo ? (openBlock(), createBlock("form", {
+                key: 3,
+                method: "POST"
+              }, [
+                createVNode(_component_v_text_field, {
+                  type: "hidden",
+                  name: "id",
+                  value: $data.empr.id
+                }, null, 8, ["value"]),
                 createVNode(_component_v_text_field, {
                   type: "hidden",
                   name: "logo_del",
@@ -338,8 +485,7 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                   name: "_token",
                   value: this.$page.props.csrf_token
                 }, null, 8, ["value"]),
-                $data.empr.logo ? (openBlock(), createBlock(_component_v_btn, {
-                  key: 0,
+                createVNode(_component_v_btn, {
                   type: "submit",
                   style: { "color": "#fff", "background-color": "red" }
                 }, {
@@ -347,13 +493,18 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                     createTextVNode("Eliminar Imagen")
                   ]),
                   _: 1
-                })) : createCommentVNode("", true)
-              ]),
+                })
+              ])) : createCommentVNode("", true),
               createVNode("form", {
                 method: "POST",
                 id: "guardaEmpresa",
                 enctype: "multipart/form-data"
               }, [
+                createVNode(_component_v_text_field, {
+                  type: "hidden",
+                  name: "id",
+                  value: $data.empr.id
+                }, null, 8, ["value"]),
                 !$data.empr.logo ? (openBlock(), createBlock(_component_v_file_input, {
                   key: 0,
                   outlined: "",
@@ -431,7 +582,16 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                     createTextVNode("Guardar")
                   ]),
                   _: 1
-                })
+                }),
+                createVNode(_component_v_btn, {
+                  href: _ctx.route("misempresas"),
+                  style: { "color": "black" }
+                }, {
+                  default: withCtx(() => [
+                    createTextVNode("Mis Empresas")
+                  ]),
+                  _: 1
+                }, 8, ["href"])
               ])
             ]),
             _: 1
@@ -454,20 +614,51 @@ const _sfc_main = {
   __ssrInlineRender: true,
   props: {
     empresa: {
-      type: Array
+      type: Object,
+      default: null
+    },
+    freeAccess: {
+      type: Boolean,
+      default: false
     }
   },
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
+      const _component_v_container = resolveComponent("v-container");
       _push(`<!--[-->`);
-      _push(ssrRenderComponent(unref(Head), { title: "Edita Empresa" }, null, _parent));
+      _push(ssrRenderComponent(unref(Head), { title: "Mi Empresa" }, null, _parent));
       _push(ssrRenderComponent(_sfc_main$2, null, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(ssrRenderComponent(EditEmpresa, { empresa: __props.empresa }, null, _parent2, _scopeId));
+            _push2(ssrRenderComponent(_component_v_container, null, {
+              default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+                if (_push3) {
+                  _push3(ssrRenderComponent(EditEmpresa, {
+                    empresa: __props.empresa,
+                    "free-access": __props.freeAccess
+                  }, null, _parent3, _scopeId2));
+                } else {
+                  return [
+                    createVNode(EditEmpresa, {
+                      empresa: __props.empresa,
+                      "free-access": __props.freeAccess
+                    }, null, 8, ["empresa", "free-access"])
+                  ];
+                }
+              }),
+              _: 1
+            }, _parent2, _scopeId));
           } else {
             return [
-              createVNode(EditEmpresa, { empresa: __props.empresa }, null, 8, ["empresa"])
+              createVNode(_component_v_container, null, {
+                default: withCtx(() => [
+                  createVNode(EditEmpresa, {
+                    empresa: __props.empresa,
+                    "free-access": __props.freeAccess
+                  }, null, 8, ["empresa", "free-access"])
+                ]),
+                _: 1
+              })
             ];
           }
         }),

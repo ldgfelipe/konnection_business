@@ -2,7 +2,7 @@ import { ref, onMounted, resolveComponent, mergeProps, withCtx, createVNode, cre
 import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrRenderAttr, ssrRenderStyle, ssrInterpolate } from "vue/server-renderer";
 import { Head } from "@inertiajs/vue3";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
-import { _ as _sfc_main$4 } from "./AuthenticatedLayout-CjO21aP_.js";
+import { _ as _sfc_main$4 } from "./AuthenticatedLayout-BTyN4XEz.js";
 import { c as categorias } from "./categorias-BLbQNXcu.js";
 import "./ApplicationLogo-DB5hZ_I6.js";
 const _sfc_main$3 = {

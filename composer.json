@@ -55,11 +55,7 @@
         "laravel": {
             "dont-discover": []
         },
-        "patches": {
-            "inertiajs/inertia-laravel": {
-                "Fix doubled URL in subdirectory deployments": "patches/inertia-url-fix.patch"
-            }
-        }
+        "patches": {}
     },
     "config": {
         "optimize-autoloader": true,

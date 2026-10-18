@@ -33,6 +33,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Vite Build Asset Prefix
+    |--------------------------------------------------------------------------
+    |
+    | Some shared hosts expose the project root as the web root instead of the
+    | "public" folder. In that case the compiled Vite assets (which live in
+    | "public/build") are reachable through "/public/build/...". Set this to
+    | "public" on those hosts. When left null the prefix is detected
+    | automatically from the document root.
+    |
+    */
+
+    'build_asset_prefix' => env('BUILD_ASSET_PREFIX'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |

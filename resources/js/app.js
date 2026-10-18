@@ -7,7 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import vuetify from '../Plugins/vuetify.js';
 import  store from './stores/store';
-import { assetUrl } from './utils/url';
+import { assetUrl, setStorageBase } from './utils/url';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -15,6 +15,7 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
+        setStorageBase(props.initialPage?.props?.app?.storageBase);
         const app = createApp({ render: () => h(App, props) });
         app.config.globalProperties.$assetUrl = assetUrl;
         app.config.globalProperties.$images = assetUrl;

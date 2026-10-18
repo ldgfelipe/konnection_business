@@ -6,6 +6,9 @@
 /vendor
 .env
 .env.backup
+.env.bak*
+# Duplicado raíz del build (obsoleto: los assets se sirven desde public/build)
+/build
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +18,7 @@ class ProfileController extends Controller
     public function edit(Request $request): Response
     {
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => !$request->user()->hasVerifiedEmail(),
             'status' => session('status'),
         ]);
     }
@@ -38,6 +37,48 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit');
+    }
+
+    /**
+     * Send email verification notification.
+     */
+    public function sendVerification(Request $request): RedirectResponse
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return Redirect::route('profile.edit')->with('status', 'El correo ya está verificado.');
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return Redirect::route('profile.edit')->with('status', 'Enlace de verificación enviado.');
+    }
+
+    /**
+     * Verify email via signed URL.
+     */
+    public function verifyEmail(Request $request, $id, $hash): RedirectResponse
+    {
+        if (!$request->hasValidSignature()) {
+            return Redirect::route('profile.edit')->with('status', 'Enlace de verificación inválido o expirado.');
+        }
+
+        $user = $request->user();
+
+        if ($user->id != $id) {
+            return Redirect::route('profile.edit')->with('status', 'Enlace de verificación inválido.');
+        }
+
+        if (!hash_equals((string) $hash, hash('sha256', $user->getEmailForVerification()))) {
+            return Redirect::route('profile.edit')->with('status', 'Enlace de verificación inválido.');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return Redirect::route('profile.edit')->with('status', 'El correo ya está verificado.');
+        }
+
+        $user->markEmailAsVerified();
+
+        return Redirect::route('profile.edit')->with('status', 'Correo verificado correctamente.');
     }
 
     /**

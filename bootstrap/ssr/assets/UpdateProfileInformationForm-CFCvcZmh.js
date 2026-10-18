@@ -63,7 +63,7 @@ const _sfc_main = {
       if (__props.mustVerifyEmail && unref(user).email_verified_at === null) {
         _push(`<div><p class="text-sm mt-2 text-gray-800"> Su dirección de correo electrónico no está verificada. `);
         _push(ssrRenderComponent(unref(Link), {
-          href: _ctx.route("verification.send"),
+          href: _ctx.route("profile.verify-email.send"),
           method: "post",
           as: "button",
           class: "underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

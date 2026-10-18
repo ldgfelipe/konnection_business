@@ -1,4 +1,10 @@
 <template>
+    <v-alert v-if="!empresaItems.length" type="warning" variant="tonal" class="mb-3">
+      Todavía no tienes una empresa o servicio registrado. Ve a
+      <a :href="route('perfilEmpresas')" class="font-weight-bold">Registrar Empresa</a>
+      para poder publicar productos.
+    </v-alert>
+
     <v-card>
         <v-card-title style="background-color:blue; color:white;">
           Mis Productos <v-btn @click="addproducto=true" style="color:black;"><v-icon>mdi-plus</v-icon></v-btn>
@@ -57,6 +63,15 @@
               {{prodselect.item.nombre}} 
               </span>
               <v-text-field label="Nombre del producto"  v-if="editor"  v-model="prodselect.item.nombre" variant="outlined"></v-text-field>
+              <v-select
+                v-if="editor && empresaItems.length"
+                v-model="prodselect.item.id_empresa"
+                :items="empresaItems"
+                item-title="nombre"
+                item-value="id"
+                label="Empresa / Servicio"
+                variant="outlined"
+              ></v-select>
               
              
               
@@ -151,6 +166,15 @@
 
 
                 <v-text-field v-model="productoAdd.action" type="hidden" value="nuevo"></v-text-field>
+                <v-select
+                  v-if="empresaItems.length"
+                  v-model="productoAdd.id_empresa"
+                  :items="empresaItems"
+                  item-title="nombre"
+                  item-value="id"
+                  label="Empresa / Servicio"
+                  variant="outlined"
+                ></v-select>
                 <v-text-field v-model="productoAdd.nombre" variant="outlined" label="Nombre"></v-text-field>
                 <v-text-field v-model="productoAdd.descripcion" variant="outlined" label="Descripción"></v-text-field>
                 <v-text-field v-model="productoAdd.precio" variant="outlined" label="Precio"></v-text-field>
@@ -241,11 +265,28 @@ export default {
     mounted(){
       console.log(this.productoAdd)
 
+      this.asignarEmpresaPorDefecto()
       this.cargaLista()
     },
     computed:{
-        },
+        empresaItems(){
+          if(this.dtEmpresas && this.dtEmpresas.length){
+            return this.dtEmpresas
+          }
+          return this.dtEmpresa ? [this.dtEmpresa] : []
+        }
+    },
     methods:{
+
+      asignarEmpresaPorDefecto(){
+        const primera = this.empresaItems.length ? this.empresaItems[0].id : null
+        this.productoAdd.id_empresa = primera
+      },
+
+      idEmpresaSeleccionada(producto){
+        return producto.id_empresa || this.productoAdd.id_empresa ||
+          (this.empresaItems.length ? this.empresaItems[0].id : null)
+      },
    
       editarproducto(item){
         this.prodselect=item
@@ -275,6 +316,11 @@ export default {
 
         },
         actualizarProducto(){
+          if(!this.idEmpresaSeleccionada(this.prodselect.item)){
+            alert('Primero registra tu empresa o servicio.')
+            return
+          }
+
           var formData = new FormData();
           var pos=0;
           var imagenesAr=[]
@@ -284,7 +330,7 @@ export default {
                 formData.append('archivo['+l+']',  this.imagenprod[l]);   
               }       
               formData.append('id', this.prodselect.item.id); 
-              formData.append('id_empresa', this.dtEmpresa.id); 
+              formData.append('id_empresa', this.idEmpresaSeleccionada(this.prodselect.item)); 
               formData.append('nombre', this.prodselect.item.nombre); 
               formData.append('descripcion', this.prodselect.item.descripcion);
               formData.append('precio', this.prodselect.item.precio);
@@ -326,6 +372,11 @@ export default {
 
         },
         guardarProducto(){
+          if(!this.idEmpresaSeleccionada(this.productoAdd)){
+            alert('Primero registra tu empresa o servicio.')
+            return
+          }
+
           var formData = new FormData();
           var pos=0;
           var imagenesAr=[]
@@ -334,7 +385,7 @@ export default {
               for(var l=0;l<this.imagenprod.length;l++){
                 formData.append('archivo['+l+']',  this.imagenprod[l]);   
               }       
-              formData.append('id_empresa', this.dtEmpresa.id); 
+              formData.append('id_empresa', this.idEmpresaSeleccionada(this.productoAdd)); 
               formData.append('nombre', this.productoAdd.nombre); 
               formData.append('descripcion', this.productoAdd.descripcion);
               formData.append('precio', this.productoAdd.precio);
@@ -350,6 +401,7 @@ export default {
                 .then((res)=>{
                     this.addproducto=false
                     this.productoAdd={...Producto}
+                    this.asignarEmpresaPorDefecto()
                     this.imagenesCargadas=[]
                     this.imagenprod=[]
                     this.cargaLista()
@@ -369,6 +421,15 @@ export default {
    
         }
     },
-    props:['dtEmpresa']
+    props:{
+        dtEmpresa:{
+            type:Object,
+            default:null
+        },
+        dtEmpresas:{
+            type:Array,
+            default:()=>[]
+        }
+    }
 }
 </script>

@@ -1,6 +1,6 @@
 import { resolveComponent, withCtx, createVNode, useSSRContext, createTextVNode, openBlock, createBlock, createCommentVNode, Fragment, renderList, toDisplayString, mergeProps, unref } from "vue";
-import { ssrRenderComponent, ssrRenderList, ssrInterpolate, ssrRenderAttr } from "vue/server-renderer";
-import { _ as _sfc_main$3 } from "./AuthenticatedLayout-CjO21aP_.js";
+import { ssrRenderComponent, ssrRenderAttr, ssrRenderList, ssrInterpolate } from "vue/server-renderer";
+import { _ as _sfc_main$3 } from "./AuthenticatedLayout-BTyN4XEz.js";
 import { c as categorias } from "./categorias-BLbQNXcu.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 import { Head } from "@inertiajs/vue3";
@@ -136,10 +136,25 @@ const _sfc_main$1 = {
   },
   mounted() {
     console.log(this.productoAdd);
+    this.asignarEmpresaPorDefecto();
     this.cargaLista();
   },
-  computed: {},
+  computed: {
+    empresaItems() {
+      if (this.dtEmpresas && this.dtEmpresas.length) {
+        return this.dtEmpresas;
+      }
+      return this.dtEmpresa ? [this.dtEmpresa] : [];
+    }
+  },
   methods: {
+    asignarEmpresaPorDefecto() {
+      const primera = this.empresaItems.length ? this.empresaItems[0].id : null;
+      this.productoAdd.id_empresa = primera;
+    },
+    idEmpresaSeleccionada(producto2) {
+      return producto2.id_empresa || this.productoAdd.id_empresa || (this.empresaItems.length ? this.empresaItems[0].id : null);
+    },
     editarproducto(item) {
       this.prodselect = item;
       this.toshowimg = this.prodselect.item.imagen ? this.prodselect.item.imagen.split(",") : [];
@@ -163,12 +178,16 @@ const _sfc_main$1 = {
       this.imagenprod = evt;
     },
     actualizarProducto() {
+      if (!this.idEmpresaSeleccionada(this.prodselect.item)) {
+        alert("Primero registra tu empresa o servicio.");
+        return;
+      }
       var formData = new FormData();
       for (var l = 0; l < this.imagenprod.length; l++) {
         formData.append("archivo[" + l + "]", this.imagenprod[l]);
       }
       formData.append("id", this.prodselect.item.id);
-      formData.append("id_empresa", this.dtEmpresa.id);
+      formData.append("id_empresa", this.idEmpresaSeleccionada(this.prodselect.item));
       formData.append("nombre", this.prodselect.item.nombre);
       formData.append("descripcion", this.prodselect.item.descripcion);
       formData.append("precio", this.prodselect.item.precio);
@@ -200,11 +219,15 @@ const _sfc_main$1 = {
       }
     },
     guardarProducto() {
+      if (!this.idEmpresaSeleccionada(this.productoAdd)) {
+        alert("Primero registra tu empresa o servicio.");
+        return;
+      }
       var formData = new FormData();
       for (var l = 0; l < this.imagenprod.length; l++) {
         formData.append("archivo[" + l + "]", this.imagenprod[l]);
       }
-      formData.append("id_empresa", this.dtEmpresa.id);
+      formData.append("id_empresa", this.idEmpresaSeleccionada(this.productoAdd));
       formData.append("nombre", this.productoAdd.nombre);
       formData.append("descripcion", this.productoAdd.descripcion);
       formData.append("precio", this.productoAdd.precio);
@@ -218,6 +241,7 @@ const _sfc_main$1 = {
         } }).then((res) => {
           this.addproducto = false;
           this.productoAdd = { ...producto };
+          this.asignarEmpresaPorDefecto();
           this.imagenesCargadas = [];
           this.imagenprod = [];
           this.cargaLista();
@@ -234,9 +258,19 @@ const _sfc_main$1 = {
       });
     }
   },
-  props: ["dtEmpresa"]
+  props: {
+    dtEmpresa: {
+      type: Object,
+      default: null
+    },
+    dtEmpresas: {
+      type: Array,
+      default: () => []
+    }
+  }
 };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
+  const _component_v_alert = resolveComponent("v-alert");
   const _component_v_card = resolveComponent("v-card");
   const _component_v_card_title = resolveComponent("v-card-title");
   const _component_v_btn = resolveComponent("v-btn");
@@ -249,11 +283,36 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
   const _component_v_col = resolveComponent("v-col");
   const _component_UploadImagenes = resolveComponent("UploadImagenes");
   const _component_v_text_field = resolveComponent("v-text-field");
-  const _component_v_textarea = resolveComponent("v-textarea");
   const _component_v_select = resolveComponent("v-select");
+  const _component_v_textarea = resolveComponent("v-textarea");
   const _component_v_combobox = resolveComponent("v-combobox");
   const _component_v_chip = resolveComponent("v-chip");
   _push(`<!--[-->`);
+  if (!$options.empresaItems.length) {
+    _push(ssrRenderComponent(_component_v_alert, {
+      type: "warning",
+      variant: "tonal",
+      class: "mb-3"
+    }, {
+      default: withCtx((_, _push2, _parent2, _scopeId) => {
+        if (_push2) {
+          _push2(` Todavía no tienes una empresa o servicio registrado. Ve a <a${ssrRenderAttr("href", _ctx.route("perfilEmpresas"))} class="font-weight-bold"${_scopeId}>Registrar Empresa</a> para poder publicar productos. `);
+        } else {
+          return [
+            createTextVNode(" Todavía no tienes una empresa o servicio registrado. Ve a "),
+            createVNode("a", {
+              href: _ctx.route("perfilEmpresas"),
+              class: "font-weight-bold"
+            }, "Registrar Empresa", 8, ["href"]),
+            createTextVNode(" para poder publicar productos. ")
+          ];
+        }
+      }),
+      _: 1
+    }, _parent));
+  } else {
+    _push(`<!---->`);
+  }
   _push(ssrRenderComponent(_component_v_card, null, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
@@ -891,6 +950,19 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                             } else {
                                               _push8(`<!---->`);
                                             }
+                                            if ($data.editor && $options.empresaItems.length) {
+                                              _push8(ssrRenderComponent(_component_v_select, {
+                                                modelValue: $data.prodselect.item.id_empresa,
+                                                "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                                items: $options.empresaItems,
+                                                "item-title": "nombre",
+                                                "item-value": "id",
+                                                label: "Empresa / Servicio",
+                                                variant: "outlined"
+                                              }, null, _parent8, _scopeId7));
+                                            } else {
+                                              _push8(`<!---->`);
+                                            }
                                           } else {
                                             return [
                                               !$data.editor ? (openBlock(), createBlock("span", { key: 0 }, " Producto: " + toDisplayString($data.prodselect.item.nombre), 1)) : createCommentVNode("", true),
@@ -900,7 +972,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                                 modelValue: $data.prodselect.item.nombre,
                                                 "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                                 variant: "outlined"
-                                              }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                              }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                              $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                                key: 2,
+                                                modelValue: $data.prodselect.item.id_empresa,
+                                                "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                                items: $options.empresaItems,
+                                                "item-title": "nombre",
+                                                "item-value": "id",
+                                                label: "Empresa / Servicio",
+                                                variant: "outlined"
+                                              }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                             ];
                                           }
                                         }),
@@ -1186,7 +1268,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                               modelValue: $data.prodselect.item.nombre,
                                               "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                               variant: "outlined"
-                                            }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                            }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                            $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                              key: 2,
+                                              modelValue: $data.prodselect.item.id_empresa,
+                                              "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                              items: $options.empresaItems,
+                                              "item-title": "nombre",
+                                              "item-value": "id",
+                                              label: "Empresa / Servicio",
+                                              variant: "outlined"
+                                            }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                           ]),
                                           _: 1
                                         }),
@@ -1302,7 +1394,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                             modelValue: $data.prodselect.item.nombre,
                                             "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                             variant: "outlined"
-                                          }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                          }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                          $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                            key: 2,
+                                            modelValue: $data.prodselect.item.id_empresa,
+                                            "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                            items: $options.empresaItems,
+                                            "item-title": "nombre",
+                                            "item-value": "id",
+                                            label: "Empresa / Servicio",
+                                            variant: "outlined"
+                                          }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                         ]),
                                         _: 1
                                       }),
@@ -1486,7 +1588,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                           modelValue: $data.prodselect.item.nombre,
                                           "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                           variant: "outlined"
-                                        }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                        }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                        $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                          key: 2,
+                                          modelValue: $data.prodselect.item.id_empresa,
+                                          "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                          items: $options.empresaItems,
+                                          "item-title": "nombre",
+                                          "item-value": "id",
+                                          label: "Empresa / Servicio",
+                                          variant: "outlined"
+                                        }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                       ]),
                                       _: 1
                                     }),
@@ -1675,7 +1787,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                         modelValue: $data.prodselect.item.nombre,
                                         "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                         variant: "outlined"
-                                      }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                      }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                      $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                        key: 2,
+                                        modelValue: $data.prodselect.item.id_empresa,
+                                        "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                        items: $options.empresaItems,
+                                        "item-title": "nombre",
+                                        "item-value": "id",
+                                        label: "Empresa / Servicio",
+                                        variant: "outlined"
+                                      }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                     ]),
                                     _: 1
                                   }),
@@ -1903,7 +2025,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                       modelValue: $data.prodselect.item.nombre,
                                       "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                       variant: "outlined"
-                                    }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                    }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                    $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                      key: 2,
+                                      modelValue: $data.prodselect.item.id_empresa,
+                                      "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                      items: $options.empresaItems,
+                                      "item-title": "nombre",
+                                      "item-value": "id",
+                                      label: "Empresa / Servicio",
+                                      variant: "outlined"
+                                    }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                   ]),
                                   _: 1
                                 }),
@@ -2136,7 +2268,17 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                                     modelValue: $data.prodselect.item.nombre,
                                     "onUpdate:modelValue": ($event) => $data.prodselect.item.nombre = $event,
                                     variant: "outlined"
-                                  }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true)
+                                  }, null, 8, ["modelValue", "onUpdate:modelValue"])) : createCommentVNode("", true),
+                                  $data.editor && $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                                    key: 2,
+                                    modelValue: $data.prodselect.item.id_empresa,
+                                    "onUpdate:modelValue": ($event) => $data.prodselect.item.id_empresa = $event,
+                                    items: $options.empresaItems,
+                                    "item-title": "nombre",
+                                    "item-value": "id",
+                                    label: "Empresa / Servicio",
+                                    variant: "outlined"
+                                  }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true)
                                 ]),
                                 _: 1
                               }),
@@ -2339,6 +2481,19 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                       type: "hidden",
                       value: "nuevo"
                     }, null, _parent4, _scopeId3));
+                    if ($options.empresaItems.length) {
+                      _push4(ssrRenderComponent(_component_v_select, {
+                        modelValue: $data.productoAdd.id_empresa,
+                        "onUpdate:modelValue": ($event) => $data.productoAdd.id_empresa = $event,
+                        items: $options.empresaItems,
+                        "item-title": "nombre",
+                        "item-value": "id",
+                        label: "Empresa / Servicio",
+                        variant: "outlined"
+                      }, null, _parent4, _scopeId3));
+                    } else {
+                      _push4(`<!---->`);
+                    }
                     _push4(ssrRenderComponent(_component_v_text_field, {
                       modelValue: $data.productoAdd.nombre,
                       "onUpdate:modelValue": ($event) => $data.productoAdd.nombre = $event,
@@ -2464,6 +2619,16 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                         type: "hidden",
                         value: "nuevo"
                       }, null, 8, ["modelValue", "onUpdate:modelValue"]),
+                      $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                        key: 0,
+                        modelValue: $data.productoAdd.id_empresa,
+                        "onUpdate:modelValue": ($event) => $data.productoAdd.id_empresa = $event,
+                        items: $options.empresaItems,
+                        "item-title": "nombre",
+                        "item-value": "id",
+                        label: "Empresa / Servicio",
+                        variant: "outlined"
+                      }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true),
                       createVNode(_component_v_text_field, {
                         modelValue: $data.productoAdd.nombre,
                         "onUpdate:modelValue": ($event) => $data.productoAdd.nombre = $event,
@@ -2574,6 +2739,16 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                       type: "hidden",
                       value: "nuevo"
                     }, null, 8, ["modelValue", "onUpdate:modelValue"]),
+                    $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                      key: 0,
+                      modelValue: $data.productoAdd.id_empresa,
+                      "onUpdate:modelValue": ($event) => $data.productoAdd.id_empresa = $event,
+                      items: $options.empresaItems,
+                      "item-title": "nombre",
+                      "item-value": "id",
+                      label: "Empresa / Servicio",
+                      variant: "outlined"
+                    }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true),
                     createVNode(_component_v_text_field, {
                       modelValue: $data.productoAdd.nombre,
                       "onUpdate:modelValue": ($event) => $data.productoAdd.nombre = $event,
@@ -2689,6 +2864,16 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
                     type: "hidden",
                     value: "nuevo"
                   }, null, 8, ["modelValue", "onUpdate:modelValue"]),
+                  $options.empresaItems.length ? (openBlock(), createBlock(_component_v_select, {
+                    key: 0,
+                    modelValue: $data.productoAdd.id_empresa,
+                    "onUpdate:modelValue": ($event) => $data.productoAdd.id_empresa = $event,
+                    items: $options.empresaItems,
+                    "item-title": "nombre",
+                    "item-value": "id",
+                    label: "Empresa / Servicio",
+                    variant: "outlined"
+                  }, null, 8, ["modelValue", "onUpdate:modelValue", "items"])) : createCommentVNode("", true),
                   createVNode(_component_v_text_field, {
                     modelValue: $data.productoAdd.nombre,
                     "onUpdate:modelValue": ($event) => $data.productoAdd.nombre = $event,
@@ -2776,7 +2961,12 @@ const ListaProductos = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["ssrRender", _
 const _sfc_main = {
   __name: "MisProductos",
   __ssrInlineRender: true,
-  props: { empresas: Array, listaproductos: Array, dtUser: Array, dtEmpresa: Array },
+  props: {
+    listaproductos: { type: Array, default: () => [] },
+    dtUser: Object,
+    dtEmpresa: { type: Object, default: null },
+    dtEmpresas: { type: Array, default: () => [] }
+  },
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
       const _component_v_container = resolveComponent("v-container");
@@ -2788,10 +2978,16 @@ const _sfc_main = {
             _push2(ssrRenderComponent(_component_v_container, null, {
               default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(ssrRenderComponent(ListaProductos, { dtEmpresa: __props.dtEmpresa }, null, _parent3, _scopeId2));
+                  _push3(ssrRenderComponent(ListaProductos, {
+                    dtEmpresa: __props.dtEmpresa,
+                    dtEmpresas: __props.dtEmpresas
+                  }, null, _parent3, _scopeId2));
                 } else {
                   return [
-                    createVNode(ListaProductos, { dtEmpresa: __props.dtEmpresa }, null, 8, ["dtEmpresa"])
+                    createVNode(ListaProductos, {
+                      dtEmpresa: __props.dtEmpresa,
+                      dtEmpresas: __props.dtEmpresas
+                    }, null, 8, ["dtEmpresa", "dtEmpresas"])
                   ];
                 }
               }),
@@ -2801,7 +2997,10 @@ const _sfc_main = {
             return [
               createVNode(_component_v_container, null, {
                 default: withCtx(() => [
-                  createVNode(ListaProductos, { dtEmpresa: __props.dtEmpresa }, null, 8, ["dtEmpresa"])
+                  createVNode(ListaProductos, {
+                    dtEmpresa: __props.dtEmpresa,
+                    dtEmpresas: __props.dtEmpresas
+                  }, null, 8, ["dtEmpresa", "dtEmpresas"])
                 ]),
                 _: 1
               })

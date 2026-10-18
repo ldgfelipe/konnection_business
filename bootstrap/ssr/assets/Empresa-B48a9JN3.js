@@ -1,6 +1,6 @@
 import { resolveComponent, unref, withCtx, createTextVNode, toDisplayString, createVNode, openBlock, createBlock, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate } from "vue/server-renderer";
-import { _ as _sfc_main$1 } from "./AuthenticatedLayout-CjO21aP_.js";
+import { _ as _sfc_main$1 } from "./AuthenticatedLayout-BTyN4XEz.js";
 import { Head } from "@inertiajs/vue3";
 import { G as GridProductos, P as Pagination } from "./Pagination-BWYpc0A7.js";
 import "./ApplicationLogo-DB5hZ_I6.js";

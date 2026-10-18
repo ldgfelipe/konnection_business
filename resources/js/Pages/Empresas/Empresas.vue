@@ -2,22 +2,28 @@
 import EditEmpresa from '@/Components/empresas/EditEmpresas.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue'
 
 
 defineProps({
    empresa:{
-      type:Array
+      type:Object,
+      default:null
+   },
+   freeAccess:{
+      type:Boolean,
+      default:false
    }
 })
 
 </script>
 <template>
-     <Head title="Edita Empresa" />
+     <Head title="Mi Empresa" />
      <AuthenticatedLayout>
-     
-      <EditEmpresa :empresa="empresa" ></EditEmpresa>
+     <v-container>
+
+      <EditEmpresa :empresa="empresa" :free-access="freeAccess"></EditEmpresa>
 
 
+     </v-container>
      </AuthenticatedLayout>
 </template>
